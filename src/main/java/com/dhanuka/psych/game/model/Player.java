@@ -33,4 +33,9 @@ public class Player extends User {
     private Set<Game> games = new HashSet<>();
 
 
+    public Game getCurrentGame() {
+        // TODO
+        Game currentGame=null;
+        return currentGame;
+    }
 }
