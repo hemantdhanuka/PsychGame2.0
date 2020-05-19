@@ -1,6 +1,7 @@
 package com.dhanuka.psych.game.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
@@ -32,10 +33,10 @@ public class Player extends User {
     @ManyToMany(mappedBy = "players")
     private Set<Game> games = new HashSet<>();
 
+    @ManyToOne
+    @JsonIdentityReference
+    @Getter
+    @Setter
+    private Game currentGame = null;
 
-    public Game getCurrentGame() {
-        // TODO
-        Game currentGame=null;
-        return currentGame;
-    }
 }

@@ -18,7 +18,7 @@ public abstract class Auditable implements Serializable {
     @Id
     @GeneratedValue(generator = "sequence", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "sequence", allocationSize = 10)
-    private long id;
+    private Long id;
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
@@ -30,5 +30,10 @@ public abstract class Auditable implements Serializable {
     @Column(nullable = false)
     private Date updatedAt = new Date();
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Auditable)
+            return ((Auditable) obj).getId().equals(getId());
+        return super.equals(obj);
+    }
 }

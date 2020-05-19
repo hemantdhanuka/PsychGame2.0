@@ -22,14 +22,15 @@ public class Game extends Auditable {
 
     @Getter
     @Setter
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @ManyToOne
     private GameMode gameMode;
 
     @Getter
     @Setter
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @OrderBy(value = "round_number asc")
     private List<Round> rounds = new ArrayList();
 
     @Getter
@@ -70,18 +71,26 @@ public class Game extends Auditable {
         this.hasEllen = hasEllen;
         this.leader = leader;
         this.gameStatus = gameStatus;
+        try {
+            addPlayer(leader);
+        } catch (InvalidGameActionException ignored) {
+            //never gonna come here but majboori
+        }
     }
 
     public void addPlayer(Player player) throws InvalidGameActionException {
         if (!gameStatus.equals(GameStatus.PLAYERS_JOINING))
             throw new InvalidGameActionException("Can't join after the game has started");
         players.add(player);
+        player.setCurrentGame(this);
     }
 
     public void removePlayer(Player player) throws InvalidGameActionException {
         if (!players.contains(player))
             throw new InvalidGameActionException("No such player was in the game.");
         players.remove(player);
+        if (player.getCurrentGame().equals(this))
+            player.setCurrentGame(null);
         if (players.size() == 0 || (players.size() == 1 && !gameStatus.equals(GameStatus.PLAYERS_JOINING)))
             endGame();
     }
@@ -89,15 +98,20 @@ public class Game extends Auditable {
     private void endGame() {
         //TODO adding stats to player stats //<-- me
         gameStatus = GameStatus.ENDED;
+        for (Player player : players){
+            if (player.getCurrentGame().equals(this)){
+                player.setCurrentGame(null);
+            }
+        }
     }
 
     public void startGame(Player player) throws InvalidGameActionException {
+        if (!gameStatus.equals(GameStatus.PLAYERS_JOINING))
+            throw new InvalidGameActionException("The game has already started");
+        if (players.size() < 2)
+            throw new InvalidGameActionException("Can't start a game with a single player");
         if (!player.equals(leader))
             throw new InvalidGameActionException("Only the leader can start the game");
-        //game players more than 1 validation added by me
-        if(players.size()<2){
-            throw new InvalidGameActionException("Game should have atleast 2 players");
-        }
 
         startNewRound();
     }
