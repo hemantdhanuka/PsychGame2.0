@@ -1,14 +1,12 @@
 package com.dhanuka.psych.game.repositories;
 
-import com.dhanuka.psych.game.model.Player;
+import com.dhanuka.psych.game.model.GameMode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface PlayerRepository extends JpaRepository<Player, Long> {
-
-    Optional<Player> findByEmail(String email);
-
+public interface GameModeRepository extends JpaRepository<GameMode, Long> {
+    Optional<GameMode> findByName(String gameMode);
 }

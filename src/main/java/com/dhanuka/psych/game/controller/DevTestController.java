@@ -4,6 +4,7 @@ import com.dhanuka.psych.game.model.Game;
 import com.dhanuka.psych.game.model.GameMode;
 import com.dhanuka.psych.game.model.Player;
 import com.dhanuka.psych.game.model.Question;
+import com.dhanuka.psych.game.repositories.GameModeRepository;
 import com.dhanuka.psych.game.repositories.GameRepository;
 import com.dhanuka.psych.game.repositories.PlayerRepository;
 import com.dhanuka.psych.game.repositories.QuestionRepository;
@@ -25,6 +26,8 @@ public class DevTestController {
     private PlayerRepository playerRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private GameModeRepository gameModeRepository;
 
     @GetMapping(value = "/")
     public String HelloWorld() {
@@ -35,8 +38,28 @@ public class DevTestController {
     @GetMapping("/populate")
     public String populateDB() {
 
+        //saving  GameMode
+        GameMode isThisAFact = new GameMode("Is This A Fact?", "https://i.pinimg.com/originals/29/cb/75/29cb75e488831ba018fe5f0925b8e39f.png", "is this a fact description");
+        gameModeRepository.save(isThisAFact);
+        gameModeRepository.save(new GameMode("Word Up", "https://i.pinimg.com/originals/29/cb/75/29cb75e488831ba018fe5f0925b8e39f.png", "word up description"));
+        gameModeRepository.save(new GameMode("Un-Scramble", "https://i.pinimg.com/originals/29/cb/75/29cb75e488831ba018fe5f0925b8e39f.png", "unscramble descirption"));
+        gameModeRepository.save(new GameMode("Movie Buff", "https://i.pinimg.com/originals/29/cb/75/29cb75e488831ba018fe5f0925b8e39f.png", "movie buff description"));
+
+        //saving questions on db
+        questionRepository.save(new Question(
+                "What is the most important Poneglyph",
+                "Rio Poneglyph",
+                isThisAFact
+        ));
+
+        questionRepository.save(new Question(
+                "How far can Luffy stretch?",
+                "56 Gomu Gomus",
+                isThisAFact
+        ));
+
         Game game = new Game();
-        game.setGameMode(GameMode.IS_THIS_A_FACT);
+        game.setGameMode(isThisAFact);
 
 
         Player luffy = new Player();
@@ -52,11 +75,12 @@ public class DevTestController {
         game.getPlayers().add(luffy);
         game.getPlayers().add(hemant);
         game.setLeader(luffy);
-        luffy.getGames().add(game);
-        hemant.getGames().add(game);
+      //  luffy.getGames().add(game);
+      //  hemant.getGames().add(game);
         playerRepository.save(luffy);
         playerRepository.save(hemant);
         gameRepository.save(game);
+
 /*
 
         Player newHemant = playerRepository.findById(hemant.getId()).get();
