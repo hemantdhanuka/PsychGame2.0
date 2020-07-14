@@ -4,6 +4,8 @@ import com.dhanuka.psych.game.exceptions.InvalidGameActionException;
 import com.dhanuka.psych.game.exceptions.NoSuchUserException;
 import com.dhanuka.psych.game.model.Player;
 import com.dhanuka.psych.game.repositories.PlayerRepository;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +18,11 @@ public class GamePlayAPI {
     PlayerRepository playerRepository;
 
     @GetMapping("/")
-    public Player play(Authentication authentication) throws NoSuchUserException {
-        Player player = getCurrentPlayer(authentication);
-        return player;
+    public JSONObject getObject(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("message","hemant");
+        return jsonObject;
     }
-
     @GetMapping("/submit-answer/{answer}")
     public void submitAnswer(Authentication authentication, @PathVariable(name="answer") String answer) throws InvalidGameActionException, NoSuchUserException {
         Player player = getCurrentPlayer(authentication);
